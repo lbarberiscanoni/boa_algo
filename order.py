@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import sys
 import time
 
@@ -60,6 +63,14 @@ class Order():
         confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
         #confirmBtn.click()
 
+    def safePass(self):
+        WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, "ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_SafePassControl_ecmsEntryHeader")))
+        self.browser.execute_script("LaunchGetSafePassCodeModal()")
+        time.sleep(1)
+        self.browser.switch_to_frame("pucSendAuthCodeModal")
+        emailInpt = self.browser.find_element_by_id("ctl00_ctl00_cphNestedUtility_cphStage_trEmail")
+        print emailInpt.text
+
     def stopLossOrder(self, ticker):
         self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
         self.exitPosition(ticker)
@@ -107,16 +118,17 @@ class Order():
         submitBtn = self.browser.find_element_by_css_selector(".actionlinks a #ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_resxlblOrderPreviewText")
         submitBtn.click()
         time.sleep(1)
-        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-        confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
-        confirmBtn.click()
+        self.safePass()
+        #self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+        #confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
+        #confirmBtn.click()
 
     def test(self):
         self.login()
         time.sleep(5)
         #self.buyOrder("VRX")
         time.sleep(2)
-        self.ceiling("VRX")
+        self.buyOrder("ISSC")
         time.sleep(5)
 
 if __name__ == "__main__":
