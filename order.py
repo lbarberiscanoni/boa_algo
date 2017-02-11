@@ -118,10 +118,10 @@ class Order():
         submitBtn = self.browser.find_element_by_css_selector(".actionlinks a #ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_resxlblOrderPreviewText")
         submitBtn.click()
         time.sleep(1)
-        self.safePass()
-        #self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-        #confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
-        #confirmBtn.click()
+        #self.safePass()
+        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+        confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
+        confirmBtn.click()
 
     def test(self):
         self.login()

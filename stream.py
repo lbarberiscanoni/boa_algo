@@ -82,7 +82,7 @@ class Trade():
                 today = today.split(".")[0]
                 today = int(today.replace(":", ""))
                 print today
-                if 125400 < today <= 131000:
+                if 125000 < today <= 131000:
                     ticker = self.checkRanks()
                     if errors < 5:
                         try:
