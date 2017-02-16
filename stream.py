@@ -63,9 +63,9 @@ class Trade():
         return ticker
 
     def checkAssets(self):
-        aum = self.browser.find_element_by_id("PSMYACCTTOTAL")
-        aum = str(aum.text).replace("$", "")
-        return aum
+        aum = self.browser.find_element_by_id("SpnNvCOBPctTOTAL")
+        aum = str(aum.text).replace("%", "")
+        return float(aum)
 
     def run(self):
         i = 0
@@ -86,7 +86,8 @@ class Trade():
                     ticker = self.checkRanks()
                     if errors < 5:
                         try:
-                            instance.buyOrder(ticker)
+                            #instance.buyOrder(ticker)
+                            self.statusUpdate("time to invest")
                             time.sleep(3)
                             status = 1
                         except Exception as e:
@@ -97,7 +98,11 @@ class Trade():
 
                 else:
                     self.browser.refresh()
-                    print self.checkAssets()
+                    aum = self.checkAssets()
+                    print aum
+                    if aum >= self.parameter_options[self.market][self.side]["ceiling"]:
+                        self.statusUpdate("ceiling was hit")
+
                 time.sleep(1)
                 i += 1
             except Exception as e:
