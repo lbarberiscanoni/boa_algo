@@ -71,11 +71,21 @@ class Order():
         emailInpt = self.browser.find_element_by_id("ctl00_ctl00_cphNestedUtility_cphStage_trEmail")
         print emailInpt.text
 
-    def stopLossOrder(self, ticker):
+    def stopLossOrder(self):
         self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
-        self.exitPosition(ticker)
-        currentPrice = self.getCurrentPrice()
-
+        actionInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlOrderType")
+        actionInpt.send_keys("Sell")
+        time.sleep(2)
+        ticker = self.browser.find_element_by_css_selector("#tblDetailbTCPE_Holdings tbody tr td a")
+        ticker = ticker.text
+        currentPrice = self.browser.find_element_by_css_selector("#tblDetailbTCPE_Holdings tbody tr")
+        currentPrice = float(currentPrice.text.split(" ")[1])
+        tickerInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtSymbol")
+        tickerInpt.send_keys(ticker)
+        tickerInpt.send_keys(Keys.RETURN)
+        time.sleep(1)
+        qtyInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_cbSellAll")
+        qtyInpt.click()
         orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
         orderTypeInpt.send_keys("Stop Quote Limit")
         stopPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtStopPrice")
@@ -128,7 +138,7 @@ class Order():
         time.sleep(5)
         #self.buyOrder("VRX")
         time.sleep(2)
-        self.buyOrder("ISSC")
+        self.stopLossOrder()
         time.sleep(5)
 
 if __name__ == "__main__":
