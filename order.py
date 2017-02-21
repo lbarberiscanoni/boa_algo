@@ -61,7 +61,7 @@ class Order():
         time.sleep(1)
         self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
         confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
-        #confirmBtn.click()
+        confirmBtn.click()
 
     def safePass(self):
         WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, "ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_SafePassControl_ecmsEntryHeader")))
