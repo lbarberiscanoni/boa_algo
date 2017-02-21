@@ -144,4 +144,7 @@ class Order():
 if __name__ == "__main__":
     username = str(sys.argv[1])
     password = str(sys.argv[2])
-    x = Order(username, password, webdriver.Chrome()).test()
+    if sys.platform == "darwin":
+        x = Order(username, password, webdriver.Chrome()).test()
+    else:
+        x = Order(username, password, webdriver.PhantomJS()).test()
