@@ -96,6 +96,7 @@ class Order():
         self.confirmTrade()
 
     def buyOrder(self, ticker):
+        self.cancelOrder()
         self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
         aum = self.checkAssets()
         actionInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlOrderType")

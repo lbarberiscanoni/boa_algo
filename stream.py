@@ -43,10 +43,10 @@ class Trade():
         }
 
 
-    if sys.platform == "darwin":
-        self.browser = webdriver.Chrome()
-    else:
-        self.browser = webdriver.PhantomJS()
+        if sys.platform == "darwin":
+            self.browser = webdriver.Chrome()
+        else:
+            self.browser = webdriver.PhantomJS()
 
     def statusUpdate(self, message):
         orderUpdate = "python gmailText.py -u hllbck7@gmail.com -p l0ll02013 -t 8642436724@text.att.net -b '" + str(message) + "'"
