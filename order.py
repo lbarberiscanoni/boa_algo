@@ -37,21 +37,6 @@ class Order():
             assets = float(str(currentBalance.text).replace("$", ""))
         return assets
 
-    def exitPosition(self, ticker):
-        actionInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlOrderType")
-        actionInpt.send_keys("Sell")
-        tickerInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtSymbol")
-        tickerInpt.send_keys(ticker)
-        tickerInpt.send_keys(Keys.RETURN)
-        time.sleep(1)
-        qtyInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_cbSellAll")
-        qtyInpt.click()
-
-    def getCurrentPrice(self):
-        currentPrice = self.browser.find_element_by_css_selector(".wgt-trade-qte-table .noborder .floatRight")
-        currentPrice = float(str(currentPrice.text).replace("$", ""))
-        return currentPrice
-
     def confirmTrade(self):
         durationInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlExpiration")
         durationInpt.send_keys("Good Until Canceled (30 days)")
@@ -71,7 +56,7 @@ class Order():
         emailInpt = self.browser.find_element_by_id("ctl00_ctl00_cphNestedUtility_cphStage_trEmail")
         print emailInpt.text
 
-    def stopLossOrder(self):
+    def exitPosition(self):
         self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
         actionInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlOrderType")
         actionInpt.send_keys("Sell")
@@ -86,6 +71,11 @@ class Order():
         time.sleep(1)
         qtyInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_cbSellAll")
         qtyInpt.click()
+
+        return currentPrice
+
+    def stopLossOrder(self):
+        currentPrice = self.exitPosition()
         orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
         orderTypeInpt.send_keys("Stop Quote Limit")
         stopPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtStopPrice")
@@ -95,16 +85,13 @@ class Order():
 
         self.confirmTrade()
 
-    def ceiling(self, ticker):
-        self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
-        self.exitPosition(ticker)
-        currentPrice = self.getCurrentPrice()
-
+    def ceiling(self):
+        currentPrice = self.exitPosition()
         orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
         orderTypeInpt.send_keys("Limit")
         time.sleep(0.5)
         limitPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtPrice")
-        limitPriceInpt.send_keys(str(format((currentPrice * 1.35), ".2f")))
+        limitPriceInpt.send_keys(str(format((currentPrice * 1.08), ".2f")))
 
         self.confirmTrade()
 
@@ -133,12 +120,21 @@ class Order():
         confirmBtn = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_PilotPreviewConfirmPage_EquitiesResourceLabel2")
         confirmBtn.click()
 
+    def cancelOrder(self):
+        self.browser.get("https://olui2.fs.ml.com/OrderStatus/OrderStatus.aspx")
+        cancelOrderBtn = self.browser.find_element_by_css_selector("#orderStatusData_tr_0_0 .paddingRight_5px .displayBlock")
+        cancelOrderBtn.click()
+        time.sleep(1.5)
+        self.browser.switch_to.frame("pucbmpExt")
+        cancelBtn = self.browser.find_element_by_id("ctl00_ctl00_cphNestedUtility_cphStage_View1_lkCancelConfirm")
+        cancelBtn.click()
+
     def test(self):
         self.login()
         time.sleep(5)
         #self.buyOrder("VRX")
         time.sleep(2)
-        self.stopLossOrder()
+        self.cancelOrder()
         time.sleep(5)
 
 if __name__ == "__main__":
