@@ -75,15 +75,30 @@ class Order():
         return currentPrice
 
     def stopLossOrder(self):
-        currentPrice = self.exitPosition()
-        orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
-        orderTypeInpt.send_keys("Stop Quote Limit")
-        stopPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtStopPrice")
-        stopPriceInpt.send_keys(str(format((currentPrice * 0.995), ".2f")))
-        limitPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtLimitPrice")
-        limitPriceInpt.send_keys(str(format((currentPrice * 0.990), ".2f")))
+        def roundToTickIncrements(n):
+            correction = 0.5 if n >= 0 else -0.5
+            return int(n / 0.05 + correction ) * 0.05
+        try:
+            currentPrice = self.exitPosition()
+            orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
+            orderTypeInpt.send_keys("Stop Quote Limit")
+            stopPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtStopPrice")
+            stopPriceInpt.send_keys(str(format((currentPrice * 0.995), ".2f")))
+            limitPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtLimitPrice")
+            limitPriceInpt.send_keys(str(format((currentPrice * 0.990), ".2f")))
 
-        self.confirmTrade()
+            self.confirmTrade()
+        except:
+            print "ticker bull shit"
+            currentPrice = self.exitPosition()
+            orderTypeInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddPriceType")
+            orderTypeInpt.send_keys("Stop Quote Limit")
+            stopPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtStopPrice")
+            stopPriceInpt.send_keys(str(format(roundToTickIncrements(currentPrice * 0.995), ".2f")))
+            limitPriceInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_txtLimitPrice")
+            limitPriceInpt.send_keys(str(format(roundToTickIncrements(currentPrice * 0.990), ".2f")))
+
+            self.confirmTrade()
 
     def ceiling(self):
         currentPrice = self.exitPosition()
@@ -96,7 +111,10 @@ class Order():
         self.confirmTrade()
 
     def buyOrder(self, ticker):
-        self.cancelOrder()
+        try:
+            self.cancelOrder()
+        except:
+            print "ordered already cancelled"
         self.browser.get("https://olui2.fs.ml.com/Equities/OrderEntry.aspx")
         aum = self.checkAssets()
         actionInpt = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphStage_view1_ddlOrderType")
@@ -133,10 +151,11 @@ class Order():
     def test(self):
         self.login()
         time.sleep(5)
-        #self.buyOrder("VRX")
+        #self.buyOrder("LNTH")
+        self.stopLossOrder()
         time.sleep(2)
-        self.cancelOrder()
-        time.sleep(5)
+        #self.cancelOrder()
+        time.sleep(30)
 
 if __name__ == "__main__":
     username = str(sys.argv[1])

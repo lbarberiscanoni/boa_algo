@@ -85,12 +85,12 @@ class Trade():
                 today = today.split(".")[0]
                 today = int(today.replace(":", ""))
                 print today
-                if 125000 < today <= 131000:
+                if 125300 < today <= 131000:
                     ticker = self.checkRanks()
                     if errors < 5:
                         try:
-                            #instance.buyOrder(ticker)
-                            self.statusUpdate("time to invest")
+                            instance.buyOrder(ticker)
+                            #self.statusUpdate("time to invest")
                             time.sleep(3)
                             status = 1
                         except Exception as e:
