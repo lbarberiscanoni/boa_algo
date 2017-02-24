@@ -65,11 +65,6 @@ class Trade():
 
         return ticker
 
-    def checkAssets(self):
-        aum = self.browser.find_element_by_id("SpnNvCOBPctTOTAL")
-        aum = str(aum.text).replace("%", "")
-        return float(aum)
-
     def run(self):
         i = 0
         status = 0
@@ -101,7 +96,7 @@ class Trade():
 
                 else:
                     self.browser.refresh()
-                    aum = self.checkAssets()
+                    aum = instance.checkAssets()
                     print aum
                     if aum >= self.parameter_options[self.market][self.side]["ceiling"]:
                         self.statusUpdate("ceiling was hit")

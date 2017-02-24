@@ -24,17 +24,12 @@ class Order():
         submitBtn.click()
 
     def checkAssets(self):
-        myAccount = self.browser.find_element_by_id("ctl00_ctl00_ctl00_cphSiteMst_cphNestedPage_cphRight2_View3_TCPE1pnlHeader")
-        myAccount.click()
-        time.sleep(1)
-        try:
-            currentBalance = self.browser.find_elements_by_css_selector("#tblDetailbTCPE_Balances .txtRight")[1]
-            assets = float(str(currentBalance.text).replace("$", ""))
-        except:
-            myAccount.click()
-            time.sleep(1)
-            currentBalance = self.browser.find_elements_by_css_selector("#tblDetailbTCPE_Balances .txtRight")[1]
-            assets = float(str(currentBalance.text).replace("$", ""))
+        self.browser.get("https://olui2.fs.ml.com/TFPHoldings/HoldingsByAccount.aspx")
+        position = self.browser.find_elements_by_css_selector("#CustomGrid_51X58Y08_tr_0_1 td")
+        position = position[len(position) - 1]
+        assets = position.text.split(" ")[0].split("\n")[1]
+        assets = float(assets.replace("%", ""))
+
         return assets
 
     def confirmTrade(self):
@@ -152,7 +147,7 @@ class Order():
         self.login()
         time.sleep(5)
         #self.buyOrder("LNTH")
-        self.stopLossOrder()
+        print self.checkAssets()
         time.sleep(2)
         #self.cancelOrder()
         time.sleep(30)
